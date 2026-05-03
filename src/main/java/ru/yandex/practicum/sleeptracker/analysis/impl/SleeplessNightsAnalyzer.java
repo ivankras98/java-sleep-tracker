@@ -1,0 +1,64 @@
+package ru.yandex.practicum.sleeptracker.analysis.impl;
+
+import ru.yandex.practicum.sleeptracker.analysis.SleepAnalysisResult;
+import ru.yandex.practicum.sleeptracker.model.SleepingSession;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class SleeplessNightsAnalyzer implements Function<List<SleepingSession>, SleepAnalysisResult> {
+
+    @Override
+    public SleepAnalysisResult apply(List<SleepingSession> sessions) {
+
+        if (sessions.isEmpty()) {
+            return new SleepAnalysisResult("Количество бессонных ночей", 0);
+        }
+
+        // 🔹 границы логирования
+        LocalDateTime firstStart = sessions.get(0).getStart();
+        LocalDateTime lastEnd = sessions.get(sessions.size() - 1).getEnd();
+
+        LocalDate startDate = firstStart.toLocalDate();
+        LocalDate endDate = lastEnd.toLocalDate();
+
+        long totalNights = ChronoUnit.DAYS.between(startDate, endDate);
+
+        // 🔹 все даты ночей
+        List<LocalDate> nights = Stream.iterate(startDate, d -> d.plusDays(1))
+                .limit(totalNights)
+                .toList();
+
+        long sleepless = nights.stream()
+                .filter(night -> isSleeplessNight(night, sessions))
+                .count();
+
+        return new SleepAnalysisResult(
+                "Количество бессонных ночей",
+                sleepless
+        );
+    }
+
+    private boolean isSleeplessNight(LocalDate night, List<SleepingSession> sessions) {
+
+        LocalDateTime nightStart = night.atTime(0, 0);
+        LocalDateTime nightEnd = night.atTime(6, 0);
+
+        // если ни одна сессия не пересекает ночь → бессонная
+        return sessions.stream()
+                .noneMatch(session ->
+                        intersects(session.getStart(), session.getEnd(), nightStart, nightEnd)
+                );
+    }
+
+    private boolean intersects(LocalDateTime s1, LocalDateTime e1,
+                               LocalDateTime s2, LocalDateTime e2) {
+        return !s1.isAfter(e2) && !e1.isBefore(s2);
+    }
+}
