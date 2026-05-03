@@ -6,7 +6,7 @@ import ru.yandex.practicum.sleeptracker.analysis.impl.SleeplessNightsAnalyzer;
 import ru.yandex.practicum.sleeptracker.analysis.impl.TotalSleepSessionsAnalyzer;
 import ru.yandex.practicum.sleeptracker.model.SleepQuality;
 import ru.yandex.practicum.sleeptracker.model.SleepingSession;
-import ru.yandex.practicum.sleeptracker.analysis.SleepAnalysisResult;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
