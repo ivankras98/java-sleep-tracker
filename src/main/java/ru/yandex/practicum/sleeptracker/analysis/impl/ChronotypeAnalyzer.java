@@ -11,6 +11,12 @@ import java.util.stream.Collectors;
 
 public class ChronotypeAnalyzer implements Function<List<SleepingSession>, SleepAnalysisResult> {
 
+    private static final String OWL = "Сова";
+    private static final String LARK = "Жаворонок";
+    private static final String PIGEON = "Голубь";
+
+    private static final String DESCRIPTION = "Хронотип пользователя";
+
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sessions) {
 
@@ -21,21 +27,21 @@ public class ChronotypeAnalyzer implements Function<List<SleepingSession>, Sleep
                         Collectors.counting()
                 ));
 
-        long owls = counts.getOrDefault("Сова", 0L);
-        long larks = counts.getOrDefault("Жаворонок", 0L);
-        long pigeons = counts.getOrDefault("Голубь", 0L);
+        long owls = counts.getOrDefault(OWL, 0L);
+        long larks = counts.getOrDefault(LARK, 0L);
+        long pigeons = counts.getOrDefault(PIGEON, 0L);
 
         String result;
 
         if (owls > larks && owls > pigeons) {
-            result = "Сова";
+            result = OWL;
         } else if (larks > owls && larks > pigeons) {
-            result = "Жаворонок";
+            result = LARK;
         } else {
-            result = "Голубь";
+            result = PIGEON;
         }
 
-        return new SleepAnalysisResult("Хронотип пользователя", result);
+        return new SleepAnalysisResult(DESCRIPTION, result);
     }
 
     private boolean isNightSession(SleepingSession s) {
@@ -48,13 +54,13 @@ public class ChronotypeAnalyzer implements Function<List<SleepingSession>, Sleep
         LocalTime end = s.getEnd().toLocalTime();
 
         if (start.isAfter(LocalTime.of(23, 0)) && end.isAfter(LocalTime.of(9, 0))) {
-            return "Сова";
+            return OWL;
         }
 
         if (start.isBefore(LocalTime.of(22, 0)) && end.isBefore(LocalTime.of(7, 0))) {
-            return "Жаворонок";
+            return LARK;
         }
 
-        return "Голубь";
+        return PIGEON;
     }
 }

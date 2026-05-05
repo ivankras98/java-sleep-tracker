@@ -12,23 +12,23 @@ import java.util.stream.Stream;
 
 public class SleeplessNightsAnalyzer implements Function<List<SleepingSession>, SleepAnalysisResult> {
 
+    private static final String DESCRIPTION = "Количество бессонных ночей";
+
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sessions) {
 
         if (sessions.isEmpty()) {
-            return new SleepAnalysisResult("Количество бессонных ночей", 0);
+            return new SleepAnalysisResult(DESCRIPTION, 0);
         }
 
-        // 🔹 границы логирования
         LocalDateTime firstStart = sessions.get(0).getStart();
         LocalDateTime lastEnd = sessions.get(sessions.size() - 1).getEnd();
 
         LocalDate startDate = firstStart.toLocalDate();
         LocalDate endDate = lastEnd.toLocalDate();
 
-        long totalNights = ChronoUnit.DAYS.between(startDate, endDate);
+        long totalNights = ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
-        // 🔹 все даты ночей
         List<LocalDate> nights = Stream.iterate(startDate, d -> d.plusDays(1))
                 .limit(totalNights)
                 .toList();
@@ -37,10 +37,7 @@ public class SleeplessNightsAnalyzer implements Function<List<SleepingSession>, 
                 .filter(night -> isSleeplessNight(night, sessions))
                 .count();
 
-        return new SleepAnalysisResult(
-                "Количество бессонных ночей",
-                sleepless
-        );
+        return new SleepAnalysisResult(DESCRIPTION, sleepless);
     }
 
     private boolean isSleeplessNight(LocalDate night, List<SleepingSession> sessions) {
@@ -48,7 +45,6 @@ public class SleeplessNightsAnalyzer implements Function<List<SleepingSession>, 
         LocalDateTime nightStart = night.atTime(0, 0);
         LocalDateTime nightEnd = night.atTime(6, 0);
 
-        // если ни одна сессия не пересекает ночь → бессонная
         return sessions.stream()
                 .noneMatch(session ->
                         intersects(session.getStart(), session.getEnd(), nightStart, nightEnd)

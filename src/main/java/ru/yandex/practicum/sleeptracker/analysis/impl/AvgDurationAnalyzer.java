@@ -8,6 +8,8 @@ import java.util.function.Function;
 
 public class AvgDurationAnalyzer implements Function<List<SleepingSession>, SleepAnalysisResult> {
 
+    private static final String DESCRIPTION = "Средняя продолжительность сна (мин)";
+
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sessions) {
 
@@ -17,7 +19,7 @@ public class AvgDurationAnalyzer implements Function<List<SleepingSession>, Slee
                 .orElse(0);
 
         return new SleepAnalysisResult(
-                "Средняя продолжительность сна (мин)",
+                DESCRIPTION,
                 Math.round(avg)
         );
     }

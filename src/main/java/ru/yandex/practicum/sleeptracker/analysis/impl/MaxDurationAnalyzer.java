@@ -9,6 +9,8 @@ import java.util.function.Function;
 
 public class MaxDurationAnalyzer implements Function<List<SleepingSession>, SleepAnalysisResult> {
 
+    private static final String DESCRIPTION = "Максимальная продолжительность сна (мин)";
+
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sessions) {
 
@@ -17,9 +19,6 @@ public class MaxDurationAnalyzer implements Function<List<SleepingSession>, Slee
                 .max(Comparator.naturalOrder())
                 .orElse(0L);
 
-        return new SleepAnalysisResult(
-                "Максимальная продолжительность сна (мин)",
-                max
-        );
+        return new SleepAnalysisResult(DESCRIPTION, max);
     }
 }

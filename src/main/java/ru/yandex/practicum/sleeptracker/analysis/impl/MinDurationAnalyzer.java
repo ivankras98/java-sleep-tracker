@@ -9,6 +9,8 @@ import java.util.function.Function;
 
 public class MinDurationAnalyzer implements Function<List<SleepingSession>, SleepAnalysisResult> {
 
+    private static final String DESCRIPTION = "Минимальная продолжительность сна (мин)";
+
     @Override
     public SleepAnalysisResult apply(List<SleepingSession> sessions) {
 
@@ -17,9 +19,6 @@ public class MinDurationAnalyzer implements Function<List<SleepingSession>, Slee
                 .min(Comparator.naturalOrder())
                 .orElse(0L);
 
-        return new SleepAnalysisResult(
-                "Минимальная продолжительность сна (мин)",
-                min
-        );
+        return new SleepAnalysisResult(DESCRIPTION, min);
     }
 }
